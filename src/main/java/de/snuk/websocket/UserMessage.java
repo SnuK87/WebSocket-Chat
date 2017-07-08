@@ -1,14 +1,14 @@
 package de.snuk.websocket;
 
-public class HelloMessage {
+public class UserMessage {
 
     private String name;
     private String message;
 
-    public HelloMessage() {
+    public UserMessage() {
     }
 
-    public HelloMessage(String name, String message) {
+    public UserMessage(String name, String message) {
 	this.name = name;
 	this.message = message;
     }

@@ -13,31 +13,31 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class GreetingController {
+public class ChatController {
 
     private static final int CAPACITIY = 5;
 
     private static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-    private Queue<Greeting> lastMessages = new LinkedBlockingQueue<>(CAPACITIY);
+    private Queue<ChatMessage> lastMessages = new LinkedBlockingQueue<>(CAPACITIY);
 
     @MessageMapping("/hello")
     @SendTo("/topic/greetings")
-    public Greeting greeting(HelloMessage message) throws Exception {
+    public ChatMessage greeting(UserMessage message) throws Exception {
 	Thread.sleep(500); // simulated delay
 
-	Greeting greeting = new Greeting(FORMATTER.format(LocalTime.now()), message.getName(), message.getMessage());
+	ChatMessage greeting = new ChatMessage(FORMATTER.format(LocalTime.now()), message.getName(), message.getMessage());
 	addMessage(greeting);
 
 	return greeting;
     }
 
     @GetMapping("/latest")
-    public List<Greeting> latest() {
+    public List<ChatMessage> latest() {
 	return new ArrayList<>(lastMessages);
     }
 
-    synchronized void addMessage(Greeting message) {
+    synchronized void addMessage(ChatMessage message) {
 	if (lastMessages.size() == CAPACITIY) {
 	    lastMessages.poll();
 	}

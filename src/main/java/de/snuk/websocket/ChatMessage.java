@@ -1,15 +1,15 @@
 package de.snuk.websocket;
 
-public class Greeting {
+public class ChatMessage {
 
     private String time;
     private String user;
     private String content;
 
-    public Greeting() {
+    public ChatMessage() {
     }
 
-    public Greeting(String time, String user, String content) {
+    public ChatMessage(String time, String user, String content) {
 	this.time = time;
 	this.user = user;
 	this.content = content;
