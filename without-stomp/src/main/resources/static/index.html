@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>WebSocket-TestClient</title>
+  <base href="/">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<script>
+
+var ws_text = new WebSocket('ws://localhost:8080/ws/text');
+var ws_bin = new WebSocket('ws://localhost:8080/ws/bin');
+var fileReader = new FileReader();
+
+
+ws_text.onopen = () => {
+	console.log('open websocket for text ...');
+	ws_text.send('just a simple text');
+}
+
+ws_text.onerror = (e) => {
+	console.log(error);
+}
+
+ws_text.onmessage = (e) => {
+	console.log('received text message: ', e.data);
+}
+
+
+ws_bin.onopen = () => {
+	console.log('open websocket for binary ...');
+
+	var blob = new Blob(['just a simple binary']);
+	ws_bin.send(blob);
+	
+	fileReader.addEventListener('loadend', (e) => {
+		var text = fileReader.result;
+		console.log('received binary message: ' + text);
+	});
+	
+};
+
+ws_bin.onerror = (e) => {
+	console.log(error);
+} 	
+
+ws_bin.onmessage = (e) => {
+	console.log(e.data);
+	fileReader.readAsText(e.data);
+}
+
+
+</script>
+
+</body>
+</html>
