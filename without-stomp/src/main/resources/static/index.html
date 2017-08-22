@@ -18,7 +18,7 @@ var fileReader = new FileReader();
 
 ws_text.onopen = () => {
 	console.log('open websocket for text ...');
-	ws_text.send('just a simple text');
+	ws_text.send('just a simple text request');
 }
 
 ws_text.onerror = (e) => {
@@ -33,7 +33,7 @@ ws_text.onmessage = (e) => {
 ws_bin.onopen = () => {
 	console.log('open websocket for binary ...');
 
-	var blob = new Blob(['just a simple binary']);
+	var blob = new Blob(['just a simple binary request']);
 	ws_bin.send(blob);
 	
 	fileReader.addEventListener('loadend', (e) => {
