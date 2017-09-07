@@ -2,7 +2,6 @@ package de.snuk.securesocket;
 
 import java.security.Principal;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
@@ -37,14 +36,14 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 	protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler,
 		Map<String, Object> attributes) {
 
-	    Set<String> keySet = attributes.keySet();
-	    keySet.forEach(System.out::println);
-
 	    System.out.println(SecurityContextHolder.getContext().getAuthentication());
 
 	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-	    return new UsernamePasswordAuthenticationToken(authentication.getName(), null);
+	    System.out.println(authentication.getAuthorities());
+
+	    return new UsernamePasswordAuthenticationToken(authentication.getName(), authentication.getCredentials(),
+		    authentication.getAuthorities());
 	}
 
     }

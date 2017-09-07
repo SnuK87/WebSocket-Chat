@@ -16,18 +16,6 @@ function connect() {
         
         name = $("#name").val();
         
-        $.ajax({
-            type: "GET",
-            contentType: "application/json",
-            url: "http://localhost:8080/latest",
-            dataType: 'json',
-            success: function(result) {
-            	for(i = 0; i < result.length; i++){
-            		showGreeting(result[i]);
-            	}
-            }
-        });
-        
         stompClient.subscribe('/topic/greetings', function (greeting) {
         	var response = JSON.parse(greeting.body);
             showGreeting(response);
