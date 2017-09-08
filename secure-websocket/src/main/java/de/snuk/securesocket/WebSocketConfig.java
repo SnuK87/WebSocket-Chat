@@ -35,17 +35,10 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 	@Override
 	protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler,
 		Map<String, Object> attributes) {
-
-	    System.out.println(SecurityContextHolder.getContext().getAuthentication());
-
 	    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-	    System.out.println(authentication.getAuthorities());
 
 	    return new UsernamePasswordAuthenticationToken(authentication.getName(), authentication.getCredentials(),
 		    authentication.getAuthorities());
 	}
-
     }
-
 }

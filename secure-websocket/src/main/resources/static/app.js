@@ -1,11 +1,9 @@
 var stompClient = null;
-var name = null;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
     $("#send").prop("disabled", !connected);
-    $("#name").prop("disabled", connected);
 }
 
 function connect() {
@@ -14,11 +12,8 @@ function connect() {
     stompClient.connect({}, function (frame) {
         setConnected(true);
         
-        name = $("#name").val();
-        
         stompClient.subscribe('/topic/greetings', function (greeting) {
-        	var response = JSON.parse(greeting.body);
-            showGreeting(response);
+        	console.log('message from subscribed topic:', greeting.body);
         });
         
         stompClient.subscribe('/user/queue/private', function (greeting) {
@@ -34,20 +29,11 @@ function disconnect() {
     setConnected(false);
 }
 
-function sendName() {
-	var message = {
-		name: name,
-		message: $("#message").val()
-	}
-	
-	stompClient.send("/app/hello", {}, JSON.stringify(message));
-	
+function sendMessage() {
+	stompClient.send("/app/hello", {}, 'message from the client');
 	stompClient.send("/user/snuk/queue/private", {}, "Hi there!");
 }
 
-function showGreeting(message) {
-    $("#conversation").append("[" + message.time + "] &lt;" + message.user + "&gt; " + message.content + "<br />");
-}
 
 $(function () {
     $("form").on('submit', function (e) {
@@ -55,5 +41,5 @@ $(function () {
     });
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#send" ).click(function() { sendName(); });
+    $( "#send" ).click(function() { sendMessage(); });
 });

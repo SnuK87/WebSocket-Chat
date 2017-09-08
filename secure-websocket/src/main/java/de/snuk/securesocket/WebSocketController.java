@@ -12,7 +12,6 @@ public class WebSocketController {
     @MessageMapping("/hello")
     @SendTo("/topic/greetings")
     public String greeting(String message, Principal principal) throws Exception {
-
 	System.out.println("received: " + message + " by: " + principal.getName());
 
 	return message.toUpperCase();
