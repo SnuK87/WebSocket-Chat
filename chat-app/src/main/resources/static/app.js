@@ -1,5 +1,4 @@
 var stompClient = null;
-var name = null;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -9,26 +8,12 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/gs-guide-websocket');
+    var socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         
-        name = $("#name").val();
-        
-        $.ajax({
-            type: "GET",
-            contentType: "application/json",
-            url: "http://localhost:8080/latest",
-            dataType: 'json',
-            success: function(result) {
-            	for(i = 0; i < result.length; i++){
-            		showGreeting(result[i]);
-            	}
-            }
-        });
-        
-        stompClient.subscribe('/topic/greetings', function (greeting) {
+        stompClient.subscribe('/topic/messages', function (greeting) {
         	var response = JSON.parse(greeting.body);
             showGreeting(response);
         });
@@ -42,13 +27,12 @@ function disconnect() {
     setConnected(false);
 }
 
-function sendName() {
+function sendMessage() {
 	var message = {
-		name: name,
 		message: $("#message").val()
 	}
 	
-	stompClient.send("/app/hello", {}, JSON.stringify(message));
+	stompClient.send("/app/chat", {}, JSON.stringify(message));
 }
 
 function showGreeting(message) {
@@ -59,7 +43,9 @@ $(function () {
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
-    $( "#connect" ).click(function() { connect(); });
-    $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#send" ).click(function() { sendName(); });
+    $( "#send" ).click(function() { sendMessage(); });
+});
+
+$(document).ready(function() {
+	connect();
 });
