@@ -22,7 +22,13 @@ function connect() {
         	console.log(greeting.body);
         });
         
-       
+        stompClient.subscribe('/topic/chat/login', function (greeting) {
+        	console.log(greeting.body, 'joined');
+        });
+        
+        stompClient.subscribe('/topic/chat/logout', function (greeting) {
+        	console.log(greeting.body, 'left');
+        });
     });
 }
 
