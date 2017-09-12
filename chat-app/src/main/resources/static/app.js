@@ -17,6 +17,12 @@ function connect() {
         	var response = JSON.parse(greeting.body);
             showGreeting(response);
         });
+        
+        stompClient.subscribe('/app/chat/users', function (greeting) {
+        	console.log(greeting.body);
+        });
+        
+       
     });
 }
 
