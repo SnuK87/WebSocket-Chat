@@ -1,4 +1,4 @@
-package de.snuk.websocket;
+package de.snuk.websocket.config;
 
 import java.security.Principal;
 import java.util.Map;
@@ -36,6 +36,7 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
 	registry.addEndpoint("/ws").setHandshakeHandler(new ChatHandshakeHandler()).withSockJS();
+
     }
 
     private class ChatHandshakeHandler extends DefaultHandshakeHandler {
