@@ -1,4 +1,5 @@
 var stompClient = null;
+var users = [];
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -15,19 +16,28 @@ function connect() {
         
         stompClient.subscribe('/topic/messages', function (greeting) {
         	var response = JSON.parse(greeting.body);
-            showGreeting(response);
+        	renderMessage(response);
         });
         
-        stompClient.subscribe('/app/chat/users', function (greeting) {
-        	console.log(greeting.body);
+        stompClient.subscribe('/app/chat/users', function (userList) {
+        	users = JSON.parse(userList.body);
+        	renderUserlist();
         });
         
-        stompClient.subscribe('/topic/chat/login', function (greeting) {
-        	console.log(greeting.body, 'joined');
+        stompClient.subscribe('/topic/chat/login', function (user) {
+        	users.unshift(user.body);
+        	renderUserlist();
         });
         
-        stompClient.subscribe('/topic/chat/logout', function (greeting) {
-        	console.log(greeting.body, 'left');
+        stompClient.subscribe('/topic/chat/logout', function (user) {
+        	for(var i = 0; i < users.length; i++){
+        		if(users[i] == user.body){
+        			users.splice(i, 1);
+        			break;
+        		}
+        	}
+        	
+        	renderUserlist();
         });
     });
 }
@@ -47,8 +57,17 @@ function sendMessage() {
 	stompClient.send("/app/chat", {}, JSON.stringify(message));
 }
 
-function showGreeting(message) {
+function renderMessage(message) {
     $("#conversation").append("[" + message.time + "] &lt;" + message.user + "&gt; " + message.content + "<br />");
+}
+
+function renderUserlist() {
+	
+	$("#users").html("");
+	
+	for(var i = 0; i < users.length; i++){
+		$("#users").append(users[i] + "<br />");
+	}
 }
 
 $(function () {

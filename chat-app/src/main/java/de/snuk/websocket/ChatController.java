@@ -3,6 +3,7 @@ package de.snuk.websocket;
 import java.security.Principal;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -24,9 +25,12 @@ public class ChatController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Autowired
+    private ChatUserRepository userRepository;
+
     @SubscribeMapping("/chat/users")
-    public String retrieveUsers() {
-	return "This should be a list containing all users";
+    public Collection<String> retrieveUsers() {
+	return userRepository.getSessions().values();
     }
 
     @MessageMapping("/chat")
