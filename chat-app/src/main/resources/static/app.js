@@ -16,13 +16,11 @@ function connect() {
         setConnected(true);
         
         stompClient.subscribe('/topic/messages', function (message) {
-        	var response = JSON.parse(message.body);
-        	renderMessage(response, false);
+        	renderMessage(JSON.parse(message.body), false);
         });
         
         stompClient.subscribe('/user/queue/private', function (message) {
-        	var response = JSON.parse(message.body);
-        	renderMessage(response, true);
+        	renderMessage(JSON.parse(message.body), true);
         });
         
         stompClient.subscribe('/app/chat/users', function (userList) {
