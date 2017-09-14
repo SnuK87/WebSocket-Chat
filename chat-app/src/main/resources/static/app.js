@@ -1,5 +1,6 @@
 var stompClient = null;
 var users = [];
+var selectedUser = null;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -14,9 +15,14 @@ function connect() {
     stompClient.connect({}, function (frame) {
         setConnected(true);
         
-        stompClient.subscribe('/topic/messages', function (greeting) {
-        	var response = JSON.parse(greeting.body);
-        	renderMessage(response);
+        stompClient.subscribe('/topic/messages', function (message) {
+        	var response = JSON.parse(message.body);
+        	renderMessage(response, false);
+        });
+        
+        stompClient.subscribe('/user/queue/private', function (message) {
+        	var response = JSON.parse(message.body);
+        	renderMessage(response, true);
         });
         
         stompClient.subscribe('/app/chat/users', function (userList) {
@@ -54,11 +60,23 @@ function sendMessage() {
 		message: $("#message").val()
 	}
 	
-	stompClient.send("/app/chat", {}, JSON.stringify(message));
+	if(selectedUser === null){
+		stompClient.send("/app/chat", {}, JSON.stringify(message));
+	}
+	else{
+		stompClient.send("/app/chat/private/" + users[selectedUser], {}, JSON.stringify(message));
+	}
+	
+	$("#message").val('');
 }
 
-function renderMessage(message) {
-    $("#conversation").append("[" + message.time + "] &lt;" + message.user + "&gt; " + message.content + "<br />");
+function renderMessage(message, private) {
+	if(private){
+		$("#conversation").append("<span class=\"privateMessage\">[" + message.time + "] &lt;" + message.user + "&gt; " + message.content + "</span><br />");
+	}
+	else{
+		$("#conversation").append("<span>[" + message.time + "] &lt;" + message.user + "&gt; " + message.content + "</span><br />");
+	}
 }
 
 function renderUserlist() {
@@ -66,7 +84,21 @@ function renderUserlist() {
 	$("#users").html("");
 	
 	for(var i = 0; i < users.length; i++){
-		$("#users").append(users[i] + "<br />");
+		$("#users").append("<span id=\"user_" + i + "\" onclick=\"clickUser(" + i + ")\">" + users[i] + "</span><br />");
+	}
+}
+
+function clickUser(index){
+	console.log('click user', index);
+	
+	if(index === selectedUser){
+		selectedUser = null;
+		$("#user_" + index).removeClass('selectedUser');
+		
+	}
+	else{
+		selectedUser = index;
+		$("#user_" + index).addClass('selectedUser');
 	}
 }
 

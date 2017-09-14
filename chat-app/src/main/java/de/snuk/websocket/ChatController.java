@@ -49,8 +49,7 @@ public class ChatController {
 	ChatMessage chatMessage = new ChatMessage(FORMATTER.format(LocalTime.now()), user.getName(),
 		message.getMessage());
 
-	// simpMessagingTemplate.convertAndSendToUser(user.getName(), destination,
-	// payload);
+	simpMessagingTemplate.convertAndSendToUser(username, "/queue/private", chatMessage);
 
     }
 }
